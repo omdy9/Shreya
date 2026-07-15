@@ -85,6 +85,16 @@ img{ max-width:100%; display:block; }
 .nav__toggle{ display:none; }
 
 /* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+.scroll-progress{
+  position:fixed; top:0; left:0; height:3px; width:0%; z-index:200;
+  background:linear-gradient(90deg, var(--accent), var(--growth));
+  transition:width 0.08s linear;
+  box-shadow:0 0 8px rgba(226,62,87,0.5);
+}
+
+/* ============================================================
    HERO — campaign-brief cover sheet
    ============================================================ */
 .hero{
@@ -150,6 +160,20 @@ img{ max-width:100%; display:block; }
   display:flex; flex-direction:column; gap:0;
   border-left:1px dashed var(--line); padding-left:var(--gutter);
 }
+.hero__passion{
+  padding:22px 0; border-bottom:1px dashed var(--line);
+  display:flex; flex-direction:column; gap:6px;
+  transition:padding-left 0.3s ease;
+}
+.hero__side--personal .hero__passion:last-child{ border-bottom:none; }
+.hero__side--personal .hero__passion{ position:relative; }
+.hero__passion:hover{ padding-left:8px; }
+.hero__passion-value{
+  font-family:var(--display); font-size:1.3rem; font-weight:500; color:var(--accent-ink);
+}
+.hero__passion-label{
+  font-family:var(--mono); font-size:0.75rem; letter-spacing:0.02em; color:var(--ink-soft); line-height:1.5;
+}
 .hero__kpi{
   padding:26px 0; border-bottom:1px dashed var(--line);
 }
@@ -162,6 +186,72 @@ img{ max-width:100%; display:block; }
   display:block; margin-top:10px; font-family:var(--mono); font-size:0.75rem; letter-spacing:0.04em;
   color:var(--ink-soft); line-height:1.5;
 }
+
+/* ============================================================
+   PHOTO FRAME — tilts toward the cursor, like picking up a
+   physical print or a clipped ID photo
+   ============================================================ */
+.photo-frame{
+  position:relative; margin-bottom:30px; will-change:transform;
+  transform:perspective(800px) rotateX(0deg) rotateY(0deg);
+  transition:transform 0.4s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
+  cursor:pointer;
+}
+.photo-frame img{ width:100%; border-radius:2px; display:block; }
+
+/* -- personal: polaroid, pinned with tape, slight default tilt -- */
+.photo-frame--personal{
+  background:#fff; padding:12px 12px 40px; border-radius:3px;
+  box-shadow:0 10px 24px rgba(22,23,29,0.14), 0 2px 6px rgba(22,23,29,0.08);
+  transform:perspective(800px) rotate(-3deg);
+}
+.photo-frame--personal:hover{
+  transform:perspective(800px) rotate(0deg) scale(1.02);
+  box-shadow:0 22px 40px rgba(22,23,29,0.22), 0 4px 10px rgba(22,23,29,0.1);
+}
+.photo-frame--personal img{ border-radius:1px; }
+.photo-frame__tape{
+  position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg);
+  width:64px; height:22px; background:rgba(243,239,228,0.75); border:1px solid rgba(22,23,29,0.08);
+  box-shadow:0 2px 4px rgba(22,23,29,0.1);
+}
+.photo-frame__caption{
+  position:absolute; left:12px; bottom:12px; font-family:var(--mono); font-size:0.72rem;
+  letter-spacing:0.04em; color:var(--ink-soft);
+}
+
+/* -- professional: clipped brief attachment, upright and precise -- */
+.photo-frame--professional{
+  background:var(--paper); padding:8px; border:1px solid var(--line); border-radius:2px;
+  box-shadow:0 8px 20px rgba(22,23,29,0.1);
+  transform:perspective(800px) rotate(0deg);
+  max-width:210px;
+}
+.photo-frame--professional:hover{
+  transform:perspective(800px) scale(1.03);
+  box-shadow:0 16px 30px rgba(22,23,29,0.16);
+  border-color:var(--accent);
+}
+.photo-frame--professional img{ aspect-ratio:3/4; object-fit:cover; }
+.photo-frame__tab{
+  position:absolute; top:-11px; right:14px; font-family:var(--mono); font-size:0.62rem;
+  letter-spacing:0.1em; color:var(--paper); background:var(--ink);
+  padding:4px 9px; border-radius:2px; transform:rotate(2deg);
+}
+
+/* ============================================================
+   MAGNETIC BUTTONS — nudge toward the cursor within reach
+   ============================================================ */
+.btn, .nav__cta{ will-change:transform; }
+
+/* click ripple */
+.btn{ position:relative; overflow:hidden; }
+.btn__ripple{
+  position:absolute; border-radius:50%; background:rgba(255,255,255,0.55);
+  transform:scale(0); animation:ripple 0.6s ease-out; pointer-events:none;
+}
+.btn--ghost .btn__ripple{ background:rgba(22,23,29,0.18); }
+@keyframes ripple{ to{ transform:scale(2.6); opacity:0; } }
 
 /* ============================================================
    SECTION shared
@@ -191,13 +281,49 @@ img{ max-width:100%; display:block; }
 }
 
 /* ============================================================
+   PASSIONS — off-duty card grid
+   ============================================================ */
+.passion-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+.passion-card{
+  position:relative; padding:32px 26px; background:var(--paper-2);
+  border:1px solid var(--line); border-radius:4px; overflow:hidden;
+  will-change:transform; transform:perspective(900px);
+  transition:transform 0.35s cubic-bezier(.22,1,.36,1), border-color 0.3s ease, box-shadow 0.35s ease;
+}
+.passion-card::before{
+  content:""; position:absolute; inset:0; opacity:0;
+  background:radial-gradient(160px circle at var(--mx,50%) var(--my,50%), rgba(226,62,87,0.14), transparent 70%);
+  transition:opacity 0.3s ease; pointer-events:none;
+}
+.passion-card:hover{
+  border-color:var(--accent); box-shadow:0 18px 30px rgba(22,23,29,0.1);
+}
+.passion-card:hover::before{ opacity:1; }
+.passion-card__num{
+  display:block; font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft);
+  letter-spacing:0.08em; margin-bottom:22px; transition:color 0.3s ease;
+}
+.passion-card:hover .passion-card__num{ color:var(--accent); }
+.passion-card__title{
+  font-size:1.35rem; font-weight:500; margin-bottom:12px; position:relative;
+}
+.passion-card__title::after{
+  content:""; display:block; width:26px; height:2px; background:var(--accent);
+  margin-top:12px; transform:scaleX(0); transform-origin:left; transition:transform 0.35s ease;
+}
+.passion-card:hover .passion-card__title::after{ transform:scaleX(1); }
+.passion-card__text{ font-size:0.94rem; color:var(--ink-soft); line-height:1.65; position:relative; }
+
+/* ============================================================
    EXPERIENCE — timeline
    ============================================================ */
 .timeline{ display:flex; flex-direction:column; }
 .role{
   display:grid; grid-template-columns:220px 1fr; gap:40px;
   padding:38px 0; border-top:1px solid var(--line);
+  transition:padding-left 0.3s cubic-bezier(.22,1,.36,1), border-color 0.3s ease;
 }
+.role:hover{ padding-left:14px; border-top-color:var(--accent); }
 .role:last-child{ border-bottom:1px solid var(--line); }
 .role__when{ display:flex; flex-direction:column; gap:10px; }
 .role__dates{ font-family:var(--mono); font-size:0.82rem; color:var(--ink-soft); }
@@ -224,9 +350,13 @@ img{ max-width:100%; display:block; }
   font-family:var(--mono); font-size:0.72rem; letter-spacing:0.03em;
   color:var(--ink); border:1px solid var(--line); border-radius:20px;
   padding:6px 13px; white-space:nowrap; background:var(--paper-2);
-  transition:border-color 0.2s ease, color 0.2s ease;
+  transition:border-color 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(.22,1,.36,1), box-shadow 0.2s ease;
+  display:inline-block;
 }
-.tag:hover{ border-color:var(--accent); color:var(--accent-ink); }
+.tag:hover{
+  border-color:var(--accent); color:var(--accent-ink);
+  transform:translateY(-3px); box-shadow:0 6px 12px rgba(22,23,29,0.1);
+}
 
 /* ============================================================
    SKILLS — keyword tag cloud
@@ -305,8 +435,33 @@ a.contact__item:hover{ background:#201f28; }
 /* ============================================================
    SCROLL REVEAL
    ============================================================ */
-.reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal{
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+  transition-delay:var(--reveal-delay, 0s);
+}
 .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+/* hero load-in sequence */
+.hero__doc-top, .hero__title, .hero__role, .hero__meta, .hero__summary, .hero__actions{
+  opacity:0; transform:translateY(14px); animation:heroIn 0.7s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero__doc-top{ animation-delay:0.05s; }
+.hero__title{ animation-delay:0.14s; }
+.hero__role{ animation-delay:0.24s; }
+.hero__meta{ animation-delay:0.32s; }
+.hero__summary{ animation-delay:0.4s; }
+.hero__actions{ animation-delay:0.48s; }
+.hero__side > *{
+  opacity:0; transform:translateY(14px) scale(0.98); animation:heroIn 0.7s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:0.35s;
+}
+@keyframes heroIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce){
+  .hero__doc-top, .hero__title, .hero__role, .hero__meta, .hero__summary, .hero__actions, .hero__side > *{
+    opacity:1; transform:none; animation:none;
+  }
+}
 
 /* ============================================================
    RESPONSIVE
@@ -316,6 +471,11 @@ a.contact__item:hover{ background:#201f28; }
   .hero__side{ border-left:none; border-top:1px dashed var(--line); padding-left:0; padding-top:20px;
     display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
   .hero__kpi{ border-bottom:none; padding:0; }
+  .hero__side--personal{ grid-template-columns:1fr 1fr; }
+  .hero__side--personal .photo-frame{ grid-column:1 / -1; max-width:280px; margin:0 auto 28px; }
+  .photo-frame--professional{ grid-column:1 / -1; margin:0 auto 24px; }
+  .hero__passion{ border-bottom:none; padding:0; }
+  .passion-grid{ grid-template-columns:1fr; }
   .brief__grid{ grid-template-columns:1fr; gap:36px; }
   .toolgrid{ grid-template-columns:repeat(2,1fr); }
   .extras{ grid-template-columns:1fr; }
